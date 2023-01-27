@@ -1,15 +1,10 @@
-/**
- * Initial resume class
- */
+package com.urise.webapp.model;
+
 public class Resume {
-
-    // Unique identifier
-    String uuid;
-
+    private final String uuid;
 
     public Resume(final String uuid) {
         this.uuid = uuid;
-
     }
 
     @Override
