@@ -7,6 +7,10 @@ public class Resume {
         this.uuid = uuid;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
     @Override
     public String toString() {
         return uuid;
