@@ -5,30 +5,29 @@ import com.urise.webapp.model.Resume;
 import java.util.Arrays;
 
 public class ArrayStorage {
-    private final Resume[] storage = new Resume[100];
+    private final int STORAGE_LIMIT = 10000;
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int count;
 
 
     public void clear() {
-        /* Arrays.fill(storage, 0, count, null);  - можно ли весто цикла for использовать Arrays.fill? */
-
-        for (int i = 0; i < count; i++) {
-            storage[i] = null;
-        }
+        Arrays.fill(storage, 0, count, null);
         count = 0;
     }
 
     public void save(Resume r) {
-        int index = findUuid(r.toString());
+        int index = findUuid(r.getUuid());
         if (index != -1) {
             System.out.println("ERROR_SAVE: Resume with UUID " + "\"" + r + "\"" + " is already in Database");
+        } else if (count == STORAGE_LIMIT) {
+            System.out.println("ERROR_SAVE: Memory is full");
         } else {
             storage[count++] = r;
         }
     }
 
     public void update(Resume r) {
-        int index = findUuid(r.toString());
+        int index = findUuid(r.getUuid());
         if (index != -1) {
             storage[index] = r;
         } else {
@@ -37,8 +36,9 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        if (findUuid(uuid) != -1) {
-            return storage[findUuid(uuid)];
+        int index = findUuid(uuid);
+        if (index != -1) {
+            return storage[index];
         } else {
             System.out.println("ERROR_GET: Resume with UUID " + "\"" + uuid + "\"" + " doesn't exist in Database");
             return null;
@@ -48,7 +48,8 @@ public class ArrayStorage {
     public void delete(String uuid) {
         int index = findUuid(uuid);
         if (index != -1) {
-            System.arraycopy(storage, index + 1, storage, index, count - 1 - index);
+            storage[index] = storage[count - 1];
+            storage[count - 1] = null;
             count--;
         } else {
             System.out.println("ERROR_DELETE: Resume with UUID " + "\"" + uuid + "\"" + " doesn't exist in Database");
@@ -57,7 +58,7 @@ public class ArrayStorage {
 
     private int findUuid(String uuid) {
         for (int i = 0; i < count; i++) {
-            if (uuid.equals(storage[i].toString())) {
+            if (uuid.equals(storage[i].getUuid())) {
                 return i;
             }
         }
