@@ -4,14 +4,14 @@ import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.ArrayStorage;
 
 public class MainTestArrayStorage {
-    static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
+    private static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume("uuid_R1");
-        Resume r2 = new Resume("uuid_R2");
-        Resume r3 = new Resume("uuid_R1");
-        Resume r4 = new Resume("uuid_R1");
-        Resume r5 = new Resume("uuid_R5");
+        final Resume r1 = new Resume("uuid_R1");
+        final Resume r2 = new Resume("uuid_R2");
+        final Resume r3 = new Resume("uuid_R1");
+        final Resume r4 = new Resume("uuid_R1");
+        final Resume r5 = new Resume("uuid_R5");
 
         ARRAY_STORAGE.save(r1);
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.toString()));
