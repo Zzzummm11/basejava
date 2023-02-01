@@ -47,7 +47,7 @@ public abstract class AbstractArrayStorage implements Storage {
         } else if (count == STORAGE_LIMIT) {
             System.out.println("ERROR_SAVE: Memory is full");
         } else {
-            addElement(r,index);
+            addElement(r, index);
         }
     }
 
