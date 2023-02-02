@@ -25,12 +25,10 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         } else {
             storage[count] = r;
         }
-        count++;
     }
 
     @Override
     protected void deleteElement(final int index) {
         System.arraycopy(storage, index + 1, storage, index, count - 1 - index);
-        count--;
     }
 }

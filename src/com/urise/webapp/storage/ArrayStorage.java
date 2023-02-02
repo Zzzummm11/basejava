@@ -16,14 +16,13 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void addElement(final Resume r, final int index) {
-        storage[count++] = r;
+        storage[count] = r;
     }
 
     @Override
     protected void deleteElement(final int index) {
         storage[index] = storage[count - 1];
         storage[count - 1] = null;
-        count--;
     }
 
 

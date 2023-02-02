@@ -48,6 +48,7 @@ public abstract class AbstractArrayStorage implements Storage {
             System.out.println("ERROR_SAVE: Memory is full");
         } else {
             addElement(r, index);
+            count++;
         }
     }
 
@@ -55,6 +56,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = getIndex(uuid);
         if (index >= 0) {
             deleteElement(index);
+            count--;
         } else {
             System.out.println("ERROR_DELETE: Resume with UUID " + "\"" + uuid + "\"" + " doesn't exist in Database");
         }

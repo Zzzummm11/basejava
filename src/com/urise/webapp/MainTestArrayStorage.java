@@ -33,7 +33,7 @@ public class MainTestArrayStorage {
         System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
 
         printAll();
-        ARRAY_STORAGE.delete(r2.getUuid());
+        ARRAY_STORAGE.delete(r3.getUuid());
 
         printAll();
         ARRAY_STORAGE.delete("uuid_R0");
