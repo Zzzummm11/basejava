@@ -13,18 +13,9 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void addElement(final Resume r, final int index) {
-        if (index == -1) {
-            if (count == 0) {
-                storage[0] = r;
-            } else {
-                Resume[] tempStorage = new Resume[count];
-                System.arraycopy(storage, 0, tempStorage, 0, count);
-                storage[0] = r;
-                System.arraycopy(tempStorage, 0, storage, 1, count);
-            }
-        } else {
-            storage[count] = r;
-        }
+        int insertionIndex = -index - 1;
+        System.arraycopy(storage, insertionIndex, storage, insertionIndex + 1, count - insertionIndex);
+        storage[insertionIndex] = r;
     }
 
     @Override
