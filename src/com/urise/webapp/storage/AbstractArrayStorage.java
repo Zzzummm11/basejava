@@ -1,5 +1,8 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exeption.ExistStorageException;
+import com.urise.webapp.exeption.NotExistStorageException;
+import com.urise.webapp.exeption.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -26,8 +29,7 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             return storage[index];
         } else {
-            System.out.println("ERROR_GET: Resume with UUID " + "\"" + uuid + "\"" + " doesn't exist in Database");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
     }
 
@@ -36,16 +38,16 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             storage[index] = r;
         } else {
-            System.out.println("ERROR_UPDATE: Resume with UUID " + "\"" + r + "\"" + " doesn't exist in Database");
+            throw new NotExistStorageException(r.getUuid());
         }
     }
 
     public void save(final Resume r) {
         int index = getIndex(r.getUuid());
         if (index >= 0) {
-            System.out.println("ERROR_SAVE: Resume with UUID " + "\"" + r + "\"" + " is already in Database");
+            throw new ExistStorageException(r.getUuid());
         } else if (count == STORAGE_LIMIT) {
-            System.out.println("ERROR_SAVE: Memory is full");
+            throw new StorageException("Storage overflow", r.getUuid());
         } else {
             addElement(r, index);
             count++;
@@ -58,7 +60,7 @@ public abstract class AbstractArrayStorage implements Storage {
             deleteElement(index);
             count--;
         } else {
-            System.out.println("ERROR_DELETE: Resume with UUID " + "\"" + uuid + "\"" + " doesn't exist in Database");
+            throw new NotExistStorageException(uuid);
         }
     }
 
