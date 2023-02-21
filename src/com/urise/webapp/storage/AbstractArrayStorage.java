@@ -1,67 +1,47 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exeption.ExistStorageException;
-import com.urise.webapp.exeption.NotExistStorageException;
-import com.urise.webapp.exeption.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int count;
 
+    protected abstract void addArrayElement(final Resume r, final int index);
+    protected abstract void deleteArrayElement(final int index);
 
-    protected abstract int getIndex(final String uuid);
 
-    protected abstract void addElement(final Resume r, final int index);
-
-    protected abstract void deleteElement(final int index);
-
+    @Override
+    protected void addElement(final Resume r, final int index) {
+        addArrayElement(r, index);
+        count++;
+    }
+    @Override
+    protected boolean saveOverflow(){
+        return count == STORAGE_LIMIT;
+    }
+    @Override
+    protected int getIndex(final Resume r) {
+        return getIndex(r.getUuid());
+    }
+    @Override
+    protected Resume getElement(final int index) {
+        return storage[index];
+    }
+    @Override
+    protected void updateElement(final int index, Resume r) {
+        storage[index] = r;
+    }
+    @Override
+    protected void deleteElement(final int index) {
+        deleteArrayElement(index);
+        count--;
+    }
 
     public int size() {
         return count;
-    }
-
-    public Resume get(final String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            return storage[index];
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-    }
-
-    public void update(final Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index >= 0) {
-            storage[index] = r;
-        } else {
-            throw new NotExistStorageException(r.getUuid());
-        }
-    }
-
-    public void save(final Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
-        } else if (count == STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", r.getUuid());
-        } else {
-            addElement(r, index);
-            count++;
-        }
-    }
-
-    public void delete(final String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            deleteElement(index);
-            count--;
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
     }
 
     public void clear() {
