@@ -40,6 +40,7 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected void deleteElement(final int index) {
         storage.remove(index);
+        storage.trimToSize();
     }
 
     public int size() {

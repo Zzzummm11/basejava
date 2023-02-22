@@ -9,11 +9,9 @@ import static java.lang.String.valueOf;
 import static org.junit.Assert.fail;
 
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
-    protected final Storage storage;
 
     public AbstractArrayStorageTest(final Storage storage) {
         super(storage);
-        this.storage = storage;
     }
 
     @Test(expected = StorageException.class)
