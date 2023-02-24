@@ -1,11 +1,11 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.AbstractArrayStorage;
-import com.urise.webapp.storage.SortedArrayStorage;
+import com.urise.webapp.storage.AbstractStorage;
+import com.urise.webapp.storage.ListStorage;
 
 public class MainTestArrayStorage {
-    private static final AbstractArrayStorage ARRAY_STORAGE = new SortedArrayStorage();
+    private static final AbstractStorage ARRAY_STORAGE = new ListStorage();
 
     public static void main(String[] args) {
         final Resume r1 = new Resume("uuid_R6");
