@@ -3,53 +3,59 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ListStorage extends AbstractStorage {
 
-    protected final ArrayList<Resume> storage = new ArrayList<>();
+    private final List<Resume> list = new ArrayList<>();
 
     @Override
     protected boolean isExist(final Object searchKey) {
-        return (int) searchKey >= 0;
+        return searchKey != null;
     }
 
     @Override
-    protected Object getSearchKey(final String uuid) {
-        return storage.indexOf(new Resume(uuid));
+    protected Integer getSearchKey(final String uuid) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return null;
     }
 
     @Override
     protected void doSave(final Resume r, final Object searchKey) {
-        storage.add(r);
+        list.add(r);
     }
 
     @Override
     protected Resume doGet(final Object searchKey) {
-        return storage.get((int) searchKey);
+        return list.get((int) searchKey);
     }
 
     @Override
     protected void doUpdate(final Object searchKey, Resume r) {
-        storage.set((int) searchKey, r);
+        list.set((int) searchKey, r);
     }
 
     @Override
     protected void doDelete(final Object searchKey) {
-        storage.remove((int) searchKey);
-        storage.trimToSize();
+        list.remove((int) searchKey);
     }
 
     public int size() {
-        return storage.size();
+        return list.size();
     }
 
     public void clear() {
-        storage.clear();
+        list.clear();
     }
 
-    public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+    @Override
+    public List<Resume> convertToList() {
+        return list;
     }
 
 }

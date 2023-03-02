@@ -12,16 +12,22 @@ public abstract class AbstractStorageTest {
 
     protected final Storage storage;
     private static final String UUID_1 = "uuid1";
+    private static final String FULLNAME_1 = "fullName_2";
     private static final String UUID_2 = "uuid2";
+    private static final String FULLNAME_2 = "fullName_1";
     private static final String UUID_3 = "uuid3";
+    private static final String FULLNAME_3 = "fullName_3";
     private static final String UUID_4 = "uuid4";
+    private static final String FULLNAME_4 = "fullName_4";
     private static final String UUID_31 = "uuid3";
+    private static final String FULLNAME_31 = "fullName_3";
     private static final String UUID_NOT_EXIST = "dummy";
     private static final Resume RESUME_1 = new Resume(UUID_1);
     private static final Resume RESUME_2 = new Resume(UUID_2);
     private static final Resume RESUME_3 = new Resume(UUID_3);
     private static final Resume RESUME_4 = new Resume(UUID_4);
     private static final Resume RESUME_31 = new Resume(UUID_31);
+
 
     public AbstractStorageTest(final Storage storage) {
         this.storage = storage;
@@ -31,6 +37,12 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
+        RESUME_1.setFullName(FULLNAME_1);
+        RESUME_2.setFullName(FULLNAME_2);
+        RESUME_3.setFullName(FULLNAME_3);
+        RESUME_4.setFullName(FULLNAME_4);
+        RESUME_31.setFullName(FULLNAME_31);
+
         storage.save(RESUME_1);
         storage.save(RESUME_2);
         storage.save(RESUME_3);
@@ -105,12 +117,12 @@ public abstract class AbstractStorageTest {
     public void clear() {
         storage.clear();
         assertSize(0);
-        assertArrayEquals(new Resume[]{}, storage.getAll());
+        assertArrayEquals(new Resume[]{}, storage.getAllSorted().toArray());
     }
 
     @Test
-    public void getAll() {
-        assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
+    public void getAllSorted() {
+        assertArrayEquals(new Resume[]{RESUME_2, RESUME_1, RESUME_3}, storage.getAllSorted().toArray());
     }
 
 }
