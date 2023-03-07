@@ -6,25 +6,25 @@ import com.urise.webapp.model.Resume;
 
 import java.util.List;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage <SK> implements Storage {
 
-    protected abstract boolean isExist(final Object searchKey);
+    protected abstract boolean isExist(final SK searchKey);
 
-    protected abstract Object getSearchKey(final String uuid);
+    protected abstract SK getSearchKey(final String uuid);
 
-    protected abstract void doSave(final Resume r, final Object searchKey);
+    protected abstract void doSave(final Resume r, final SK searchKey);
 
-    protected abstract Resume doGet(final Object searchKey);
+    protected abstract Resume doGet(final SK searchKey);
 
-    protected abstract void doUpdate(final Object searchKey, final Resume r);
+    protected abstract void doUpdate(final SK searchKey, final Resume r);
 
-    protected abstract void doDelete(final Object searchKey);
+    protected abstract void doDelete(final SK searchKey);
 
     protected abstract List<Resume> convertToList();
 
 
-    private Object getExistingSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+    private SK getExistingSearchKey(String uuid) {
+        SK searchKey = getSearchKey(uuid);
         if (isExist(searchKey)) {
             return searchKey;
         } else {
@@ -32,8 +32,8 @@ public abstract class AbstractStorage implements Storage {
         }
     }
 
-    private Object getNotExistingSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+    private SK getNotExistingSearchKey(String uuid) {
+        SK searchKey = getSearchKey(uuid);
         if (isExist(searchKey)) {
             throw new ExistStorageException(uuid);
         } else {
@@ -42,23 +42,23 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void save(final Resume r) {
-        Object searchKey = getNotExistingSearchKey(r.getUuid());
+        SK searchKey = getNotExistingSearchKey(r.getUuid());
         doSave(r, searchKey);
     }
 
     public Resume get(final String uuid) {
-        Object searchKey = getExistingSearchKey(uuid);
+        SK searchKey = getExistingSearchKey(uuid);
         return doGet(searchKey);
     }
 
     public void update(final Resume r) {
-        Object searchKey = getExistingSearchKey(r.getUuid());
+        SK searchKey = getExistingSearchKey(r.getUuid());
         doUpdate(searchKey, r);
 
     }
 
     public void delete(final String uuid) {
-        Object searchKey = getExistingSearchKey(uuid);
+        SK searchKey = getExistingSearchKey(uuid);
         doDelete(searchKey);
     }
 
