@@ -5,7 +5,7 @@ import com.urise.webapp.storage.AbstractStorage;
 import com.urise.webapp.storage.ListStorage;
 
 public class MainTestArrayStorage {
-    private static final AbstractStorage ARRAY_STORAGE = new ListStorage();
+    private static final AbstractStorage<Integer> ARRAY_STORAGE = new ListStorage();
 
     public static void main(String[] args) {
         final Resume r1 = new Resume("uuid_R6");

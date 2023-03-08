@@ -1,12 +1,21 @@
 package com.urise.webapp.model;
 
+import java.util.Objects;
+import java.util.UUID;
+
 public class Resume implements Comparable<Resume> {
     private final String uuid;
+    private final String fullName;
 
-    private String fullName;
 
-    public Resume(final String uuid) {
+    public Resume(final String fullName) {
+        this.uuid = UUID.randomUUID().toString();
+        this.fullName = fullName;
+    }
+
+    public Resume(final String uuid, final String fullName) {
         this.uuid = uuid;
+        this.fullName = fullName;
     }
 
     public String getUuid() {
@@ -17,9 +26,6 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public void setFullName(final String fullName) {
-        this.fullName = fullName;
-    }
 
     @Override
     public boolean equals(final Object o) {
@@ -28,12 +34,15 @@ public class Resume implements Comparable<Resume> {
 
         final Resume resume = (Resume) o;
 
-        return uuid.equals(resume.uuid);
+        if (!Objects.equals(uuid, resume.uuid)) return false;
+        return Objects.equals(fullName, resume.fullName);
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -44,5 +53,4 @@ public class Resume implements Comparable<Resume> {
     @Override
     public int compareTo(final Resume o) {
         return uuid.compareTo(o.uuid);
-    }
-}
+    }}

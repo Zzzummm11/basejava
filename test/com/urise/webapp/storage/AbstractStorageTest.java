@@ -22,11 +22,11 @@ public abstract class AbstractStorageTest {
     private static final String UUID_31 = "uuid3";
     private static final String FULLNAME_31 = "fullName_3";
     private static final String UUID_NOT_EXIST = "dummy";
-    private static final Resume RESUME_1 = new Resume(UUID_1);
-    private static final Resume RESUME_2 = new Resume(UUID_2);
-    private static final Resume RESUME_3 = new Resume(UUID_3);
-    private static final Resume RESUME_4 = new Resume(UUID_4);
-    private static final Resume RESUME_31 = new Resume(UUID_31);
+    private static final Resume RESUME_1 = new Resume(UUID_1,FULLNAME_1);
+    private static final Resume RESUME_2 = new Resume(UUID_2,FULLNAME_2);
+    private static final Resume RESUME_3 = new Resume(UUID_3,FULLNAME_3);
+    private static final Resume RESUME_4 = new Resume(UUID_4,FULLNAME_4);
+    private static final Resume RESUME_31 = new Resume(UUID_31,FULLNAME_31);
 
 
     public AbstractStorageTest(final Storage storage) {
@@ -37,11 +37,6 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        RESUME_1.setFullName(FULLNAME_1);
-        RESUME_2.setFullName(FULLNAME_2);
-        RESUME_3.setFullName(FULLNAME_3);
-        RESUME_4.setFullName(FULLNAME_4);
-        RESUME_31.setFullName(FULLNAME_31);
 
         storage.save(RESUME_1);
         storage.save(RESUME_2);
@@ -93,7 +88,7 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
-        storage.save(new Resume(UUID_31));
+        storage.save(RESUME_31);
     }
 
     @Test()
