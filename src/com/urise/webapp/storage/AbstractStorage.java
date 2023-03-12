@@ -12,6 +12,9 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
+    public static final Comparator<Resume> COMPARE_RESUME = Comparator.comparing(Resume::getFullName)
+            .thenComparing(Resume::getUuid);
+
     protected abstract boolean isExist(final SK searchKey);
 
     protected abstract SK getSearchKey(final String uuid);
@@ -71,9 +74,6 @@ public abstract class AbstractStorage<SK> implements Storage {
         SK searchKey = getExistingSearchKey(uuid);
         doDelete(searchKey);
     }
-
-    public static final Comparator<Resume> COMPARE_RESUME = Comparator.comparing((Resume r) -> r.getFullName())
-            .thenComparing((Resume r) -> r.getUuid());
 
     public List<Resume> getAllSorted() {
         LOG.info("getAllSorted");
