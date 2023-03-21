@@ -1,16 +1,18 @@
 package com.urise.webapp.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
-    private final List<Organization> allOrganisations;
+    private final List<Organization> allOrganizations;
 
     public OrganizationSection(final List<Organization> allOrganisations) {
-        this.allOrganisations = allOrganisations;
+        Objects.requireNonNull(allOrganisations, "organizations must not be null");
+        this.allOrganizations = allOrganisations;
     }
 
-    public List<Organization> getAllOrganisations() {
-        return allOrganisations;
+    public List<Organization> getAllOrganizations() {
+        return allOrganizations;
     }
 
     @Override
@@ -20,18 +22,18 @@ public class OrganizationSection extends AbstractSection {
 
         final OrganizationSection that = (OrganizationSection) o;
 
-        return getAllOrganisations() != null ? getAllOrganisations().equals(that.getAllOrganisations()) : that.getAllOrganisations() == null;
+        return getAllOrganizations().equals(that.getAllOrganizations());
     }
 
     @Override
     public int hashCode() {
-        return allOrganisations.hashCode();
+        return getAllOrganizations().hashCode();
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        for (Organization allOrganisation : allOrganisations) {
+        for (Organization allOrganisation : allOrganizations) {
             sb.append(allOrganisation).append('\n');
         }
         return sb.toString();

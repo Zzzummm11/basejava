@@ -1,6 +1,7 @@
 package com.urise.webapp.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Organization {
 
@@ -10,11 +11,13 @@ public class Organization {
 
 
     public Organization(final String name, final List<Period> periods) {
+        Objects.requireNonNull(name, "name organization must not be null");
         this.name = name;
         this.periods = periods;
     }
 
     public Organization(final String name, final String website, final List<Period> periods) {
+        Objects.requireNonNull(name, "name organization must not be null");
         this.name = name;
         this.website = website;
         this.periods = periods;
@@ -43,14 +46,14 @@ public class Organization {
 
         final Organization that = (Organization) o;
 
-        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
+        if (!getName().equals(that.getName())) return false;
         if (getWebsite() != null ? !getWebsite().equals(that.getWebsite()) : that.getWebsite() != null) return false;
         return getPeriods() != null ? getPeriods().equals(that.getPeriods()) : that.getPeriods() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
+        int result = getName().hashCode();
         result = 31 * result + (getWebsite() != null ? getWebsite().hashCode() : 0);
         result = 31 * result + (getPeriods() != null ? getPeriods().hashCode() : 0);
         return result;

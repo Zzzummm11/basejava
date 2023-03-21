@@ -1,18 +1,19 @@
 package com.urise.webapp.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ListTextSection extends AbstractSection {
     private final List<String> list;
 
     public ListTextSection(final List<String> list) {
+        Objects.requireNonNull(list, "items must not be null");
         this.list = list;
     }
 
     public List<String> getList() {
         return list;
     }
-
 
     @Override
     public boolean equals(final Object o) {
@@ -21,12 +22,12 @@ public class ListTextSection extends AbstractSection {
 
         final ListTextSection that = (ListTextSection) o;
 
-        return list.equals(that.list);
+        return getList().equals(that.getList());
     }
 
     @Override
     public int hashCode() {
-        return list.hashCode();
+        return getList().hashCode();
     }
 
     @Override

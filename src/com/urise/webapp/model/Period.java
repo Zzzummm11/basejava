@@ -1,6 +1,7 @@
 package com.urise.webapp.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Period {
 
@@ -10,12 +11,18 @@ public class Period {
     private String description;
 
     public Period(final LocalDate startDate, final LocalDate endDate, final String title) {
+        Objects.requireNonNull(startDate, "startDate organization must not be null");
+        Objects.requireNonNull(endDate, "endDate organization must not be null");
+        Objects.requireNonNull(title, "title organization must not be null");
         this.startDate = startDate;
         this.endDate = endDate;
         this.title = title;
     }
 
     public Period(final LocalDate startDate, final LocalDate endDate, final String title, final String description) {
+        Objects.requireNonNull(startDate, "startDate organization must not be null");
+        Objects.requireNonNull(endDate, "endDate organization must not be null");
+        Objects.requireNonNull(title, "title organization must not be null");
         this.startDate = startDate;
         this.endDate = endDate;
         this.title = title;
@@ -49,19 +56,17 @@ public class Period {
 
         final Period period = (Period) o;
 
-        if (getStartDate() != null ? !getStartDate().equals(period.getStartDate()) : period.getStartDate() != null)
-            return false;
-        if (getEndDate() != null ? !getEndDate().equals(period.getEndDate()) : period.getEndDate() != null)
-            return false;
-        if (getTitle() != null ? !getTitle().equals(period.getTitle()) : period.getTitle() != null) return false;
+        if (!getStartDate().equals(period.getStartDate())) return false;
+        if (!getEndDate().equals(period.getEndDate())) return false;
+        if (!getTitle().equals(period.getTitle())) return false;
         return getDescription() != null ? getDescription().equals(period.getDescription()) : period.getDescription() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = getStartDate() != null ? getStartDate().hashCode() : 0;
-        result = 31 * result + (getEndDate() != null ? getEndDate().hashCode() : 0);
-        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
+        int result = getStartDate().hashCode();
+        result = 31 * result + getEndDate().hashCode();
+        result = 31 * result + getTitle().hashCode();
         result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
         return result;
     }
