@@ -72,31 +72,30 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(final File file) {
-        file.delete();
+        if(!file.delete()){
+            throw new StorageException("File is not deleted", file.getName());
+        }
     }
 
     @Override
     protected List<Resume> convertToList() {
         List<Resume> list = new ArrayList<>();
         for (File file : Objects.requireNonNull(directory.listFiles())) {
-            try {
-                list.add(doRead(file));
-            } catch (IOException e) {
-                throw new StorageException("IO error", file.getName(), e);
-            }
+            list.add(doGet(file));
         }
         return list;
     }
 
     @Override
     public int size() {
+
         return Objects.requireNonNull(directory.listFiles()).length;
     }
 
     @Override
     public void clear() {
         for (File file : Objects.requireNonNull(directory.listFiles())) {
-            file.delete();
+            doDelete(file);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.urise.webapp;
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.DataUtil;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +64,11 @@ public class ResumeTestData {
         r.getSections().put(EXPERIENCE, new OrganizationSection(allOrganizations));
         List<Period> periods1 = new ArrayList<>();
         allOrganizations.add(new Organization("Alcatel", "http://www.alcatel.ru/", periods1));
-        periods1.add(new Period(LocalDate.of(1997, 9, 1), LocalDate.of(2005, 1, 1), "Инженер по аппаратному и программному тестированию",
+        periods1.add(new Period(DataUtil.of(1997, Month.SEPTEMBER), DataUtil.of(2005, Month.JANUARY), "Инженер по аппаратному и программному тестированию",
                 "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)"));
         List<Period> periods2 = new ArrayList<>();
         allOrganizations.add(new Organization("Siemens AG", "https://www.siemens.com/global/en.html", periods2));
-        periods2.add(new Period(LocalDate.of(2005, 1, 1), LocalDate.of(2007, 2, 1), "Разработчик ПО",
+        periods2.add(new Period(DataUtil.of(2005, Month.JANUARY), DataUtil.of(2007, Month.FEBRUARY), "Разработчик ПО",
                 "Разработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix)"));
 
         List<Organization> allEducations = new ArrayList<>();
@@ -77,11 +76,11 @@ public class ResumeTestData {
         r.getSections().put(EDUCATION, new OrganizationSection(allEducations));
         List<Period> periods11 = new ArrayList<>();
         allEducations.add(new Organization("Coursera", "https://www.coursera.org/learn/scala-functional-programming", periods11));
-        periods11.add(new Period(DataUtil.of(2013, Month.MARCH), LocalDate.of(2013, 5, 1), "\n" +
+        periods11.add(new Period(DataUtil.of(2013, Month.MARCH), DataUtil.of(2013, Month.MAY), "\n" +
                 "'Functional Programming Principles in Scala' by Martin Odersky"));
         List<Period> periods22 = new ArrayList<>();
         allEducations.add(new Organization("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366", periods22));
-        periods22.add(new Period(LocalDate.of(2011, 3, 1), LocalDate.of(2011, 4, 1), "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML'"));
+        periods22.add(new Period(DataUtil.of(2011, Month.MARCH),DataUtil.of(2011, Month.APRIL), "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML'"));
 
         return r;
     }
