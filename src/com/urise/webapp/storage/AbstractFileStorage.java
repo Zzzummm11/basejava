@@ -72,7 +72,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(final File file) {
-        if(!file.delete()){
+        if (!file.delete()) {
             throw new StorageException("File is not deleted", file.getName());
         }
     }
@@ -80,22 +80,37 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> convertToList() {
         List<Resume> list = new ArrayList<>();
-        for (File file : Objects.requireNonNull(directory.listFiles())) {
-            list.add(doGet(file));
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                list.add(doGet(file));
+            }
+            return list;
+        } else {
+            throw new StorageException("File is null", null);
         }
-        return list;
     }
 
     @Override
     public int size() {
-
-        return Objects.requireNonNull(directory.listFiles()).length;
+        File[] files = directory.listFiles();
+        if (files != null) {
+            return files.length;
+        } else {
+            throw new StorageException("File is null", null);
+        }
     }
+
 
     @Override
     public void clear() {
-        for (File file : Objects.requireNonNull(directory.listFiles())) {
-            doDelete(file);
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                doDelete(file);
+            }
+        } else {
+            throw new StorageException("File is null", null);
         }
     }
 }
