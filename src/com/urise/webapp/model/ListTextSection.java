@@ -1,9 +1,11 @@
 package com.urise.webapp.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class ListTextSection extends AbstractSection {
+public class ListTextSection extends AbstractSection implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final List<String> list;
 
     public ListTextSection(final List<String> list) {
