@@ -8,15 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
+    private Stream stream;
     private final File directory;
 
-    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
 
-    protected abstract Resume doRead(InputStream is) throws IOException;
+    public void setStream(final Stream stream) {
+        this.stream = stream;
+    }
+    public Stream getStream() {
+        return stream;
+    }
+    public File getDirectory() {
+        return directory;
+    }
 
-    protected AbstractFileStorage(File directory) {
+    protected FileStorage(final File directory,final Stream stream) {
         Objects.requireNonNull(directory, "directory must not be null");
+        Objects.requireNonNull(stream, "stream must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
@@ -24,10 +33,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
         }
         this.directory = directory;
-    }
-
-    public File getDirectory() {
-        return directory;
+        this.stream = stream;
     }
 
     @Override
@@ -53,7 +59,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(final File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return getStream().doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -62,7 +68,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(final File file, final Resume r) {
         try {
-            doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+            getStream().doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", r.getUuid(), e);
         }
