@@ -2,6 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exeption.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.stream.StreamSerializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,21 +10,23 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
-    private Stream stream;
+    private StreamSerializer stream;
     private final File directory;
 
 
-    public void setStream(final Stream stream) {
+    public void setStream(final StreamSerializer stream) {
         this.stream = stream;
     }
-    public Stream getStream() {
+
+    public StreamSerializer getStream() {
         return stream;
     }
+
     public File getDirectory() {
         return directory;
     }
 
-    protected FileStorage(final File directory,final Stream stream) {
+    protected FileStorage(final File directory, final StreamSerializer stream) {
         Objects.requireNonNull(directory, "directory must not be null");
         Objects.requireNonNull(stream, "stream must not be null");
         if (!directory.isDirectory()) {
@@ -59,7 +62,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(final File file) {
         try {
-            return getStream().doRead(new BufferedInputStream(new FileInputStream(file)));
+            return stream.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -68,7 +71,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(final File file, final Resume r) {
         try {
-            getStream().doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+            stream.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", r.getUuid(), e);
         }
@@ -84,11 +87,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> convertToList() {
         List<Resume> list = new ArrayList<>();
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("File is null", null);
-        }
-        for (File file : files) {
+        for (File file : getListFiles()) {
             list.add(doGet(file));
         }
         return list;
@@ -96,22 +95,22 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        String[] list = directory.list();
-        if (list == null) {
-            throw new StorageException("File is null", null);
-        }
-        return list.length;
+        return getListFiles().length;
     }
 
 
     @Override
     public void clear() {
+        for (File file : getListFiles()) {
+            doDelete(file);
+        }
+    }
+
+    public File[] getListFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
             throw new StorageException("File is null", null);
         }
-        for (File file : files) {
-            doDelete(file);
-        }
+        return files;
     }
 }
