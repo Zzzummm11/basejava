@@ -3,9 +3,13 @@ package com.urise.webapp.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+
 public class TextSection extends AbstractSection implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final String text;
+    private String text;
+
+    public TextSection() {
+    }
 
     public TextSection(final String textSection) {
         Objects.requireNonNull(textSection, "content must not be null");
@@ -14,6 +18,10 @@ public class TextSection extends AbstractSection implements Serializable {
 
     public String getText() {
         return text;
+    }
+
+    public void setText(final String text) {
+        this.text = text;
     }
 
     @Override

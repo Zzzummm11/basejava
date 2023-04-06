@@ -1,15 +1,30 @@
 package com.urise.webapp.model;
 
+import com.google.gson.annotations.JsonAdapter;
+import com.urise.webapp.util.LocalDataAdapter;
+import com.urise.webapp.util.LocalDateTimeTypeAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Period implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final LocalDate startDate;
-    private final LocalDate endDate;
-    private final String title;
+    @JsonAdapter(LocalDateTimeTypeAdapter.class)
+    @XmlJavaTypeAdapter(LocalDataAdapter.class)
+    private LocalDate startDate;
+    @JsonAdapter(LocalDateTimeTypeAdapter.class)
+    @XmlJavaTypeAdapter(LocalDataAdapter.class)
+    private LocalDate endDate;
+    private String title;
     private String description;
+
+    public Period() {
+    }
 
     public Period(final LocalDate startDate, final LocalDate endDate, final String title) {
         Objects.requireNonNull(startDate, "startDate organization must not be null");
