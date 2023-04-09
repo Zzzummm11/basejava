@@ -4,10 +4,7 @@ import com.urise.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class DataStream implements StreamSerializer {
     @Override
@@ -17,54 +14,71 @@ public class DataStream implements StreamSerializer {
             dos.writeUTF(r.getFullName());
 
             Map<ContactType, String> contacts = r.getContacts();
-            dos.writeInt(contacts.size());
 
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writeWithExeption(contacts.entrySet(), dos, entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
 
             Map<SectionType, AbstractSection> sections = r.getSections();
-            dos.writeInt(sections.size());
 
-            for (Map.Entry<SectionType, AbstractSection> entry : r.getSections().entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+            writeWithExeption(sections.entrySet(), dos, entry -> {
+                SectionType sectionType = entry.getKey();
+                dos.writeUTF(sectionType.name());
                 AbstractSection section = entry.getValue();
-                writeSection(dos, section);
-            }
+                writeSection(dos, section, sectionType);
+            });
         }
     }
 
-
-    private void writeSection(DataOutputStream dos, AbstractSection section) throws IOException {
-        if (section instanceof TextSection) {
-            writeNotNullElement(dos, (((TextSection) section).getText()));
+    private <K> void writeWithExeption(Collection<K> collection, DataOutputStream dos,
+                                       WriteCollection<K> map) throws IOException {
+        dos.writeInt(collection.size());
+        for (K i : collection) {
+            map.write(i);
         }
+    }
 
-        if (section instanceof ListTextSection) {
-            dos.writeInt(((ListTextSection) section).getList().size());
+    @FunctionalInterface
+    private interface WriteCollection<K> {
+        void write(K k) throws IOException;
+    }
 
-            for (String value : ((ListTextSection) section).getList()) {
-                writeNotNullElement(dos, value);
-            }
-        }
+    private void writeSection(DataOutputStream dos, AbstractSection section, SectionType sectionType) throws IOException {
+        switch (sectionType) {
+            case PERSONAL:
+            case OBJECTIVE:
+                writeNotNullElement(dos, (((TextSection) section).getText()));
+                break;
 
-        if (section instanceof OrganizationSection) {
-            dos.writeInt(((OrganizationSection) section).getAllOrganizations().size());
+            case ACHIEVEMENT:
+            case QUALIFICATION:
+                dos.writeInt(((ListTextSection) section).getList().size());
 
-            for (Organization organization : ((OrganizationSection) section).getAllOrganizations()) {
-                writeNotNullElement(dos, organization.getName());
-                writeNotNullElement(dos, organization.getWebsite());
-
-                dos.writeInt(organization.getPeriods().size());
-
-                for (Period period : organization.getPeriods()) {
-                    writeNotNullElement(dos, String.valueOf(period.getStartDate()));
-                    writeNotNullElement(dos, String.valueOf(period.getEndDate()));
-                    writeNotNullElement(dos, period.getTitle());
-                    writeNotNullElement(dos, period.getDescription());
+                for (String value : ((ListTextSection) section).getList()) {
+                    writeNotNullElement(dos, value);
                 }
-            }
+                break;
+
+            case EXPERIENCE:
+            case EDUCATION:
+                dos.writeInt(((OrganizationSection) section).getAllOrganizations().size());
+
+                for (Organization organization : ((OrganizationSection) section).getAllOrganizations()) {
+                    writeNotNullElement(dos, organization.getName());
+                    writeNotNullElement(dos, organization.getWebsite());
+
+                    dos.writeInt(organization.getPeriods().size());
+
+                    for (Period period : organization.getPeriods()) {
+                        writeNotNullElement(dos, String.valueOf(period.getStartDate()));
+                        writeNotNullElement(dos, String.valueOf(period.getEndDate()));
+                        writeNotNullElement(dos, period.getTitle());
+                        writeNotNullElement(dos, period.getDescription());
+                    }
+                }
+            default:
+                break;
         }
     }
 
@@ -103,46 +117,52 @@ public class DataStream implements StreamSerializer {
     }
 
     private AbstractSection readSection(DataInputStream dis, SectionType sectionType) throws IOException {
-        if (sectionType == SectionType.PERSONAL || sectionType == SectionType.OBJECTIVE) {
-            return new TextSection(readNotNullElement(dis));
-        }
-        if (sectionType == SectionType.ACHIEVEMENT || sectionType == SectionType.QUALIFICATION) {
-            List<String> list = new ArrayList<>();
+        switch (sectionType) {
+            case PERSONAL:
+            case OBJECTIVE:
+                return new TextSection(readNotNullElement(dis));
 
-            int num1 = dis.readInt();
+            case ACHIEVEMENT:
+            case QUALIFICATION:
+                List<String> list = new ArrayList<>();
 
-            for (int j = 0; j < num1; j++) {
-                list.add(readNotNullElement(dis));
-            }
-            return new ListTextSection(list);
-        }
-        if (sectionType == SectionType.EXPERIENCE || sectionType == SectionType.EDUCATION) {
-            List<Organization> allOrganisations = new ArrayList<>();
+                int num1 = dis.readInt();
 
-            int num2 = dis.readInt();
-
-            for (int j = 0; j < num2; j++) {
-                String name = readNotNullElement(dis);
-                String website = readNotNullElement(dis);
-
-                int num3 = dis.readInt();
-
-                List<Period> periods = new ArrayList<>();
-                for (int k = 0; k < num3; k++) {
-                    String startDateStr = readNotNullElement(dis);
-                    String endDateStr = readNotNullElement(dis);
-                    String title = readNotNullElement(dis);
-                    String description = readNotNullElement(dis);
-                    Period period = new Period(LocalDate.parse(Objects.requireNonNull(startDateStr)), LocalDate.parse(Objects.requireNonNull(endDateStr)), title);
-                    period.setDescription(description);
-                    periods.add(period);
+                for (int j = 0; j < num1; j++) {
+                    list.add(readNotNullElement(dis));
                 }
-                Organization org = (website != null) ? new Organization(name, website, periods) : new Organization(name, periods);
-                allOrganisations.add(org);
-            }
-            return new OrganizationSection(allOrganisations);
+                return new ListTextSection(list);
+
+            case EXPERIENCE:
+            case EDUCATION:
+                List<Organization> allOrganisations = new ArrayList<>();
+
+                int num2 = dis.readInt();
+
+                for (int j = 0; j < num2; j++) {
+                    String name = readNotNullElement(dis);
+                    String website = readNotNullElement(dis);
+
+                    int num3 = dis.readInt();
+
+                    List<Period> periods = new ArrayList<>();
+                    for (int k = 0; k < num3; k++) {
+                        String startDateStr = readNotNullElement(dis);
+                        String endDateStr = readNotNullElement(dis);
+                        String title = readNotNullElement(dis);
+                        String description = readNotNullElement(dis);
+                        Period period = new Period(LocalDate.parse(Objects.requireNonNull(startDateStr)), LocalDate.parse(Objects.requireNonNull(endDateStr)), title);
+                        period.setDescription(description);
+                        periods.add(period);
+                    }
+                    Organization org = (website != null) ? new Organization(name, website, periods) : new Organization(name, periods);
+                    allOrganisations.add(org);
+                }
+                return new OrganizationSection(allOrganisations);
+
+            default:
+                return null;
         }
-        return null;
     }
 
     private String readNotNullElement(DataInputStream dis) throws IOException {
@@ -153,4 +173,7 @@ public class DataStream implements StreamSerializer {
             return ob;
         }
     }
+
+
 }
+
