@@ -53,30 +53,29 @@ public class DataStream implements StreamSerializer {
 
             case ACHIEVEMENT:
             case QUALIFICATION:
-                dos.writeInt(((ListTextSection) section).getList().size());
 
-                for (String value : ((ListTextSection) section).getList()) {
+                writeWithExeption(((ListTextSection) section).getList(), dos, value -> {
                     writeNotNullElement(dos, value);
-                }
+                });
                 break;
 
             case EXPERIENCE:
             case EDUCATION:
-                dos.writeInt(((OrganizationSection) section).getAllOrganizations().size());
 
-                for (Organization organization : ((OrganizationSection) section).getAllOrganizations()) {
+                writeWithExeption(((OrganizationSection) section).getAllOrganizations(), dos, organization -> {
                     writeNotNullElement(dos, organization.getName());
                     writeNotNullElement(dos, organization.getWebsite());
 
-                    dos.writeInt(organization.getPeriods().size());
+                    writeWithExeption(organization.getPeriods(), dos, period -> {
 
-                    for (Period period : organization.getPeriods()) {
                         writeNotNullElement(dos, String.valueOf(period.getStartDate()));
                         writeNotNullElement(dos, String.valueOf(period.getEndDate()));
                         writeNotNullElement(dos, period.getTitle());
                         writeNotNullElement(dos, period.getDescription());
-                    }
-                }
+                    });
+                });
+                break;
+
             default:
                 break;
         }
