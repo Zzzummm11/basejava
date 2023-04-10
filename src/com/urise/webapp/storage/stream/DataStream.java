@@ -31,17 +31,17 @@ public class DataStream implements StreamSerializer {
         }
     }
 
+    @FunctionalInterface
+    private interface WriteCollection<K> {
+        void write(K k) throws IOException;
+    }
+
     private <K> void writeWithExeption(Collection<K> collection, DataOutputStream dos,
                                        WriteCollection<K> map) throws IOException {
         dos.writeInt(collection.size());
         for (K i : collection) {
             map.write(i);
         }
-    }
-
-    @FunctionalInterface
-    private interface WriteCollection<K> {
-        void write(K k) throws IOException;
     }
 
     private void writeSection(DataOutputStream dos, AbstractSection section, SectionType sectionType) throws IOException {
@@ -54,9 +54,7 @@ public class DataStream implements StreamSerializer {
             case ACHIEVEMENT:
             case QUALIFICATION:
 
-                writeWithExeption(((ListTextSection) section).getList(), dos, value -> {
-                    writeNotNullElement(dos, value);
-                });
+                writeWithExeption(((ListTextSection) section).getList(), dos, value -> writeNotNullElement(dos, value));
                 break;
 
             case EXPERIENCE:
@@ -89,6 +87,7 @@ public class DataStream implements StreamSerializer {
         }
     }
 
+
     @Override
     public Resume doRead(final InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
@@ -97,21 +96,25 @@ public class DataStream implements StreamSerializer {
 
             Resume resume = new Resume(uuid, fullName);
 
-            int size = dis.readInt();
+            readWithExeption(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
 
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-
-            AbstractSection section;
-
-            int numSections = dis.readInt();
-            for (int i = 0; i < numSections; i++) {
+            readWithExeption(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                section = readSection(dis, sectionType);
-                resume.addSection(sectionType, section);
-            }
+                resume.addSection(sectionType, readSection(dis, sectionType));
+            });
             return resume;
+        }
+    }
+
+    @FunctionalInterface
+    private interface ReadCollection {
+        void read() throws IOException;
+    }
+
+    private void readWithExeption(DataInputStream dis, ReadCollection map) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            map.read();
         }
     }
 
@@ -125,27 +128,20 @@ public class DataStream implements StreamSerializer {
             case QUALIFICATION:
                 List<String> list = new ArrayList<>();
 
-                int num1 = dis.readInt();
-
-                for (int j = 0; j < num1; j++) {
-                    list.add(readNotNullElement(dis));
-                }
+                readWithExeption(dis, () -> list.add(readNotNullElement(dis)));
                 return new ListTextSection(list);
 
             case EXPERIENCE:
             case EDUCATION:
                 List<Organization> allOrganisations = new ArrayList<>();
 
-                int num2 = dis.readInt();
-
-                for (int j = 0; j < num2; j++) {
+                readWithExeption(dis, () -> {
                     String name = readNotNullElement(dis);
                     String website = readNotNullElement(dis);
 
-                    int num3 = dis.readInt();
-
                     List<Period> periods = new ArrayList<>();
-                    for (int k = 0; k < num3; k++) {
+
+                    readWithExeption(dis, () -> {
                         String startDateStr = readNotNullElement(dis);
                         String endDateStr = readNotNullElement(dis);
                         String title = readNotNullElement(dis);
@@ -153,12 +149,14 @@ public class DataStream implements StreamSerializer {
                         Period period = new Period(LocalDate.parse(Objects.requireNonNull(startDateStr)), LocalDate.parse(Objects.requireNonNull(endDateStr)), title);
                         period.setDescription(description);
                         periods.add(period);
+                    });
+                    if (website != null) {
+                        allOrganisations.add(new Organization(name, website, periods));
+                    } else {
+                        allOrganisations.add(new Organization(name, periods));
                     }
-                    Organization org = (website != null) ? new Organization(name, website, periods) : new Organization(name, periods);
-                    allOrganisations.add(org);
-                }
+                });
                 return new OrganizationSection(allOrganisations);
-
             default:
                 return null;
         }
