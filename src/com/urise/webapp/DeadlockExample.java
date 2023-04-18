@@ -9,8 +9,12 @@ public class DeadlockExample {
         Resume r1 = new Resume();
         Resume r2 = new Resume();
 
+        createAndStartThread(r1,r2);
+        createAndStartThread(r2,r1);
 
-        Thread thread1 = new Thread(() -> {
+    }
+    public static void createAndStartThread(Resume r1, Resume r2){
+        new Thread(() -> {
             System.out.println(Thread.currentThread().getName() + ": start");
             synchronized (r1) {
                 try {
@@ -19,36 +23,14 @@ public class DeadlockExample {
                     throw new RuntimeException(e);
                 }
 
-                System.out.println(Thread.currentThread().getName() + " trying to work with r2");
+                System.out.println(Thread.currentThread().getName() + " trying to work with first resume");
 
                 synchronized (r2) {
                 }
 
                 System.out.println(Thread.currentThread().getName() + " finish");
             }
-        }, "Thread_1");
-
-        Thread thread2 = new Thread(() -> {
-            System.out.println(Thread.currentThread().getName() + ": start");
-            synchronized (r2) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                System.out.println(Thread.currentThread().getName() + " trying to work with r1");
-
-                synchronized (r1) {
-                }
-
-                System.out.println(Thread.currentThread().getName() + " finish");
-            }
-        }, "Thread_2");
-
-        thread1.start();
-        thread2.start();
-
+        }).start();
     }
 }
 
