@@ -32,10 +32,7 @@ public class MainStreams {
         Map<Boolean, List<Integer>> map = integers.stream()
                 .collect(Collectors.partitioningBy(n -> n % 2 != 0));
 
-        if (map.get(true).size() % 2 != 0) {
-            return map.get(false);
-        } else {
-            return map.get(true);
-        }
+        return map.get(true).size() % 2 != 0 ? map.get(false) : map.get(true);
     }
 }
+
