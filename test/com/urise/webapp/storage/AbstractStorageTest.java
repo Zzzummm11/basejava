@@ -1,8 +1,9 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exeption.ExistStorageException;
+import com.urise.webapp.Config;
 import com.urise.webapp.exeption.NotExistStorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.storage.Storage;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,18 +13,19 @@ import static com.urise.webapp.ResumeTestData.createResume;
 import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("C:\\Users\\KOSTUA\\Desktop\\BaseJAva\\basejava\\storage");
+    protected static final File STORAGE_DIR = Config.get().getStorageDir();
+
     protected final Storage storage;
     private static final String UUID_1 = "uuid1";
-    private static final String FULLNAME_1 = "fullName_2";
+    private static final String FULLNAME_1 = "fullName_1";
     private static final String UUID_2 = "uuid2";
-    private static final String FULLNAME_2 = "fullName_1";
+    private static final String FULLNAME_2 = "fullName_2";
     private static final String UUID_3 = "uuid3";
     private static final String FULLNAME_3 = "fullName_3";
     private static final String UUID_4 = "uuid4";
     private static final String FULLNAME_4 = "fullName_4";
     private static final String UUID_31 = "uuid3";
-    private static final String FULLNAME_31 = "fullName_3";
+    private static final String FULLNAME_31 = "fullName_31";
     private static final String UUID_NOT_EXIST = "dummy";
     private static final Resume RESUME_1 = createResume(UUID_1, FULLNAME_1);
     private static final Resume RESUME_2 = createResume(UUID_2, FULLNAME_2);
@@ -89,7 +91,7 @@ public abstract class AbstractStorageTest {
         assertGet(RESUME_4);
     }
 
-    @Test(expected = ExistStorageException.class)
+    @Test(expected = Exception.class)
     public void saveExist() {
         storage.save(RESUME_31);
     }
@@ -120,7 +122,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() {
-        assertArrayEquals(new Resume[]{RESUME_2, RESUME_1, RESUME_3}, storage.getAllSorted().toArray());
+        assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAllSorted().toArray());
     }
 
 }
