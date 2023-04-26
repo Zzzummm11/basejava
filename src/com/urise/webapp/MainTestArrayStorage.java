@@ -1,8 +1,8 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.AbstractStorage;
-import com.urise.webapp.storage.ListStorage;
+import com.urise.webapp.model.storage.AbstractStorage;
+import com.urise.webapp.model.storage.ListStorage;
 
 public class MainTestArrayStorage {
     private static final AbstractStorage<Integer> ARRAY_STORAGE = new ListStorage();

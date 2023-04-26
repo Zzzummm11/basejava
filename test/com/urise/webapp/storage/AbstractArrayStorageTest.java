@@ -2,9 +2,10 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exeption.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.storage.Storage;
 import org.junit.Test;
 
-import static com.urise.webapp.storage.AbstractArrayStorage.STORAGE_LIMIT;
+import static com.urise.webapp.model.storage.AbstractArrayStorage.STORAGE_LIMIT;
 import static java.lang.String.valueOf;
 import static org.junit.Assert.fail;
 

@@ -1,4 +1,4 @@
-package com.urise.webapp.storage.stream;
+package com.urise.webapp.model.storage.stream;
 
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.XmlParser;
@@ -7,7 +7,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class XmlStream implements StreamSerializer {
-    private XmlParser xmlParser;
+    private final XmlParser xmlParser;
 
     public XmlStream() {
         xmlParser = new XmlParser(
