@@ -13,10 +13,10 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public void runSqlRequest(String sqlRequest, SqlStatement statement) {
+    public < T > T runSqlRequest(String sqlRequest, SqlStatement<T> statement) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sqlRequest)) {
-            statement.run(ps);
+            return statement.run(ps);
         } catch (SQLException e) {
             throw new StorageException(e);
         }
