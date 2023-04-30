@@ -1,5 +1,6 @@
 package com.urise.webapp.sql;
 
+import com.urise.webapp.exeption.ExistStorageException;
 import com.urise.webapp.exeption.StorageException;
 
 import java.sql.Connection;
@@ -13,12 +14,16 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public < T > T runSqlRequest(String sqlRequest, SqlStatement<T> statement) {
+    public <T> T runSqlRequest(String sqlRequest, SqlStatement<T> statement) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sqlRequest)) {
             return statement.run(ps);
         } catch (SQLException e) {
-            throw new StorageException(e);
+            if (e.getSQLState().equals("23505")) {
+                throw new ExistStorageException(null);
+            } else {
+                throw new StorageException(e);
+            }
         }
     }
 
