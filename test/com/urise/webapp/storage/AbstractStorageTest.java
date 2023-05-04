@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.Config;
 import com.urise.webapp.exeption.ExistStorageException;
 import com.urise.webapp.exeption.NotExistStorageException;
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.model.storage.Storage;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Arrays;
 
+import static com.urise.webapp.ResumeTestData.createResume;
 import static com.urise.webapp.model.storage.AbstractStorage.COMPARE_RESUME;
 import static org.junit.Assert.*;
 
@@ -24,11 +26,15 @@ public abstract class AbstractStorageTest {
     private static final String FULL_NAME_4 = "fullName_4";
     private static final String FULL_NAME_31 = "fullName_31";
     private static final String UUID_NOT_EXIST = "dummy";
-    private static final Resume RESUME_1 = new Resume(FULL_NAME_1);
-    private static final Resume RESUME_2 = new Resume(FULL_NAME_2);
-    private static final Resume RESUME_3 = new Resume(FULL_NAME_3);
-    private static final Resume RESUME_4 = new Resume(FULL_NAME_4);
-    private static final Resume RESUME_31 = new Resume(RESUME_3.getUuid(), FULL_NAME_31);
+    private static final Resume RESUME_1 = createResume(FULL_NAME_1);
+    private static final Resume RESUME_2 = createResume(FULL_NAME_2);
+    private static final Resume RESUME_3 = createResume(FULL_NAME_3);
+    private static final Resume RESUME_4 = createResume(FULL_NAME_4);
+    private static final Resume RESUME_31 = createResume(RESUME_3.getUuid(), FULL_NAME_31);
+    {
+        RESUME_31.addContact(ContactType.TELEPHONE, "12345");
+        RESUME_31.addContact(ContactType.SKYPE, "skype");
+    }
 
 
     public AbstractStorageTest(final Storage storage) {

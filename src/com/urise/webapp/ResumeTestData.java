@@ -10,28 +10,22 @@ import java.util.List;
 import static com.urise.webapp.model.ContactType.*;
 import static com.urise.webapp.model.SectionType.*;
 
-
 public class ResumeTestData {
-    public static void main(String[] args) {
-
-        Resume r1 = createResume("uuid_1","Григорий Кислин");
-
-        System.out.println(r1.getFullName());
-
-        for (ContactType type : ContactType.values()) {
-            System.out.println(type.getTitle() + r1.getContacts().get(type));
-        }
-        System.out.println("______________________________");
-
-        for (SectionType type : SectionType.values()) {
-            System.out.println(type.getTitle() + '\n' + r1.getSections().get(type) + '\n');
-        }
-    }
 
     public static Resume createResume(String uuid, String fullName) {
+        Resume r = new Resume(uuid,fullName);
+        addContactsToResume(r);
+        return r;
+    }
 
-        Resume r = new Resume(uuid, fullName);
+    public static Resume createResume(String fullName) {
+        Resume r = new Resume(fullName);
+        addContactsToResume(r);
+        return r;
+    }
 
+
+    private static void addContactsToResume(Resume r){
         r.getContacts().put(TELEPHONE, "+7(921) 855-0482");
         r.getContacts().put(SKYPE, "skype:grigory.kislin");
         r.getContacts().put(EMAIL, "gkislin@yandex.ru");
@@ -39,10 +33,10 @@ public class ResumeTestData {
         r.getContacts().put(GITHUB, "https://github.com/gkislin");
         r.getContacts().put(STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
         r.getContacts().put(WEBSITE, "http://gkislin.ru/");
+    }
 
-
-        r.getSections().put(OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и " +
-                "Enterprise технологиям"));
+    private static void addSectionsToResume(Resume r){
+        r.getSections().put(OBJECTIVE, new TextSection("hj"));
         r.getSections().put(PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. " +
                 "Пурист кода и архитектуры."));
 
@@ -63,7 +57,7 @@ public class ResumeTestData {
 
         r.getSections().put(EXPERIENCE, new OrganizationSection(allOrganizations));
         List<Period> periods1 = new ArrayList<>();
-        allOrganizations.add(new Organization("Alcatel", "http://www.alcatel.ru/", periods1));
+        allOrganizations.add(new Organization("Alcatel", periods1));
         periods1.add(new Period(DataUtil.of(1997, Month.SEPTEMBER), DataUtil.of(2005, Month.JANUARY), "Инженер по аппаратному и программному тестированию",
                 "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)"));
         List<Period> periods2 = new ArrayList<>();
@@ -80,8 +74,6 @@ public class ResumeTestData {
                 "'Functional Programming Principles in Scala' by Martin Odersky"));
         List<Period> periods22 = new ArrayList<>();
         allEducations.add(new Organization("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366", periods22));
-        periods22.add(new Period(DataUtil.of(2011, Month.MARCH),DataUtil.of(2011, Month.APRIL), "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML'"));
-
-        return r;
+        periods22.add(new Period(DataUtil.of(2011, Month.MARCH),DataUtil.of(2011, Month.APRIL), "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML'","dsdsdsd"));
     }
 }
