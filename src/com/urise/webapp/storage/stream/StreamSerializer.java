@@ -1,4 +1,4 @@
-package com.urise.webapp.model.storage.stream;
+package com.urise.webapp.storage.stream;
 
 import com.urise.webapp.model.Resume;
 

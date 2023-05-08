@@ -1,4 +1,4 @@
-package com.urise.webapp.model.storage;
+package com.urise.webapp.storage;
 
 import com.urise.webapp.exeption.NotExistStorageException;
 import com.urise.webapp.model.ContactType;
@@ -7,6 +7,7 @@ import com.urise.webapp.sql.ConnectionFactory;
 import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,22 +105,22 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         return sqlHelper.transactionExecute(conn -> {
+            final Map<String, Resume> mapOfResumes = new LinkedHashMap<>();
             try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume ORDER BY full_name")) {
-                Map<String, Resume> mapOfResumes = new LinkedHashMap<>();
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     String uuid = rs.getString("uuid");
                     String fullName = rs.getString("full_name");
                     mapOfResumes.put(uuid, new Resume(uuid, fullName));
                 }
-                try (PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM contact")) {
-                    ResultSet rs1 = ps1.executeQuery();
-                    while (rs1.next()) {
-                        addContactToResume(rs1, mapOfResumes.get(rs1.getString("resume_uuid")));
-                    }
-                }
-                return mapOfResumes.values().stream().toList();
             }
+            try (PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM contact")) {
+                ResultSet rs1 = ps1.executeQuery();
+                while (rs1.next()) {
+                    addContactToResume(rs1, mapOfResumes.get(rs1.getString("resume_uuid")));
+                }
+            }
+            return new ArrayList<>(mapOfResumes.values());
         });
     }
 

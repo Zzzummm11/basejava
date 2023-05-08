@@ -5,7 +5,6 @@ import com.urise.webapp.exeption.ExistStorageException;
 import com.urise.webapp.exeption.NotExistStorageException;
 import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.storage.Storage;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import static com.urise.webapp.ResumeTestData.createResume;
-import static com.urise.webapp.model.storage.AbstractStorage.COMPARE_RESUME;
+import static com.urise.webapp.storage.AbstractStorage.COMPARE_RESUME;
 import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {

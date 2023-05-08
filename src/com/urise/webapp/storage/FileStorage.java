@@ -1,8 +1,8 @@
-package com.urise.webapp.model.storage;
+package com.urise.webapp.storage;
 
 import com.urise.webapp.exeption.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.storage.stream.StreamSerializer;
+import com.urise.webapp.storage.stream.StreamSerializer;
 
 import java.io.*;
 import java.util.ArrayList;
