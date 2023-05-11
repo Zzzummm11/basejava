@@ -19,5 +19,20 @@ CREATE TABLE contact
 
 );
 
+CREATE TABLE section
+(
+    id          serial
+        CONSTRAINT section_pk
+            PRIMARY KEY,
+    resume_uuid CHAR(36) NOT NULL
+        CONSTRAINT section_resume_uuid_fk
+            REFERENCES resume
+            ON UPDATE RESTRICT ON DELETE CASCADE,
+
+    type        TEXT     NOT NULL,
+    value       TEXT     NOT NULL
+
+);
+
 CREATE UNIQUE INDEX contact_uuid_type_index
     ON contact (resume_uuid, type);
