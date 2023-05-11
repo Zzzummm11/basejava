@@ -1,0 +1,44 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+}
+
+caption {
+    font-family: arial, sans-serif;
+    caption-side: top;
+    text-align: center;
+    padding: 10px 0;
+}
+
+th {
+    border: 1px solid #dddddd;
+    width: auto;
+    text-align: center;
+    padding: 8px;
+}
+
+td {
+    border: 1px solid #dddddd;
+    width: auto;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+p {
+    font-family: arial, sans-serif;
+}
+
+#example-link {
+    font-family: arial, sans-serif;
+    color: black;
+}
+
+.link-style {
+    font-family: arial, sans-serif;
+    color: black;
+    font-size: 16px;
+}
