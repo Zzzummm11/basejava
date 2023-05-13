@@ -15,8 +15,8 @@ public class SqlStorage implements Storage {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-        throw new RuntimeException("Postgres JDBC Driver is not find classpath", e);
-    }
+            throw new RuntimeException("Postgres JDBC Driver is not find classpath", e);
+        }
         ConnectionFactory connectionFactory = () -> DriverManager.getConnection(dburl, dbuser, dbpassword);
         sqlHelper = new SqlHelper(connectionFactory);
     }
@@ -45,7 +45,7 @@ public class SqlStorage implements Storage {
                         "LEFT JOIN section s " +
                         "       ON r.uuid = s.resume_uuid " +
                         "    WHERE r.uuid=?",
-                (ps -> {
+                ps -> {
                     ps.setString(1, uuid);
 
                     ResultSet rs = ps.executeQuery();
@@ -60,7 +60,7 @@ public class SqlStorage implements Storage {
                     } while (rs.next());
 
                     return r;
-                }));
+                });
     }
 
     @Override
@@ -175,24 +175,12 @@ public class SqlStorage implements Storage {
         switch (sectionType) {
             case PERSONAL:
             case OBJECTIVE:
-
-                return String.valueOf(section);
-
+                return ((TextSection) section).getText();
             case ACHIEVEMENT:
             case QUALIFICATION:
-
-                List<String> list = ((ListTextSection) section).getList();
-                StringBuilder sb = new StringBuilder(list.get(0));
-
-                for (int i = 1; i < list.size(); i++) {
-                    sb.append("\n").append(list.get(i));
-                }
-
-                return String.valueOf(sb);
-
+                return String.join("\n", ((ListTextSection) section).getList());
 //            case EXPERIENCE:
 //            case EDUCATION:
-
             default:
                 return null;
 
@@ -216,15 +204,12 @@ public class SqlStorage implements Storage {
             case PERSONAL:
             case OBJECTIVE:
                 return new TextSection(rs.getString("section_value"));
-
             case ACHIEVEMENT:
             case QUALIFICATION:
                 String value = rs.getString("section_value");
                 return new ListTextSection(Arrays.asList(value.split("\n")));
-
 //            case EXPERIENCE:
 //            case EDUCATION:
-
             default:
                 return null;
         }
