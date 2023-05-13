@@ -2,6 +2,7 @@ package com.urise.webapp.web;
 
 import com.urise.webapp.Config;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.Storage;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,10 +13,19 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
+    private Storage storage;
+
+    @Override
+    public void init() throws ServletException {
+        storage = Config.get().getStorage();
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -36,7 +46,7 @@ public class ResumeServlet extends HttpServlet {
             html.append("<caption>Выбранное резюме</caption>");
             html.append("<tr><th>uuid</th><th>fullName</th></tr>");
             html.append("<tr>");
-            Resume r = Config.get().getStorage().get(uuid);
+            Resume r = storage.get(uuid);
             html.append("<td>").append(uuid).append("</td>");
             html.append("<td>").append(r.getFullName()).append("</td>");
             html.append("</tr>");
@@ -50,7 +60,7 @@ public class ResumeServlet extends HttpServlet {
             html.append("<caption>Список всех резюме</caption>");
             html.append("<tr><th>№</th><th>uuid</th><th>fullName</th></tr>");
             html.append("<tr>");
-            List<Resume> list = Config.get().getStorage().getAllSorted();
+            List<Resume> list = storage.getAllSorted();
             for (int i = 0; i < list.size(); i++) {
                 html.append("<td>").append(i + 1).append("</td>");
                 html.append("<td><a href=\"resume?uuid=");
