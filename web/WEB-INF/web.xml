@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-
     <servlet>
         <servlet-name>resumeServlet</servlet-name>
         <servlet-class>com.urise.webapp.web.ResumeServlet</servlet-class>
@@ -14,21 +13,38 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>tableOfResumes</servlet-name>
-        <jsp-file>/WEB-INF/views/tableOfResumes.jsp</jsp-file>
+        <servlet-name>list</servlet-name>
+        <jsp-file>/WEB-INF/jsp/list.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>tableOfResumes</servlet-name>
+        <servlet-name>list</servlet-name>
         <url-pattern>/all_resumes</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>oneResume</servlet-name>
-        <jsp-file>/WEB-INF/views/oneResume.jsp</jsp-file>
+        <servlet-name>view</servlet-name>
+        <jsp-file>/WEB-INF/jsp/view.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>oneResume</servlet-name>
-        <url-pattern>/one_resume</url-pattern>
+        <servlet-name>view</servlet-name>
+        <url-pattern>/view</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>edit</servlet-name>
+        <jsp-file>/WEB-INF/jsp/edit.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>edit</servlet-name>
+        <url-pattern>/edit</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>header</servlet-name>
+        <jsp-file>/WEB-INF/jsp/fragments/header.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>header</servlet-name>
+        <url-pattern>/header</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>

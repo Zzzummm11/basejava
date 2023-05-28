@@ -3,6 +3,7 @@ package com.urise.webapp.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,9 @@ public class Organization implements Serializable {
     private List<Period> periods;
 
     public Organization() {
+        this.name = null;
+        this.website = null;
+        this.periods= new ArrayList<>(List.of(new Period()));
     }
 
     public Organization(final String name, final List<Period> periods) {
@@ -45,6 +49,7 @@ public class Organization implements Serializable {
         return periods;
     }
 
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -71,7 +76,7 @@ public class Organization implements Serializable {
         for (Period period : periods) {
             sb.append(period);
         }
-        return name + ", " + website + ", " + '\n' +
+        return name + ", " + website + ", " + "<br/>" +
                 sb;
     }
 }

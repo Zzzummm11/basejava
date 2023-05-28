@@ -30,11 +30,16 @@ public abstract class AbstractStorageTest {
     private static final String FULL_NAME_31 = "fullName_31";
     private static final String UUID_NOT_EXIST = "dummy";
     private static final Resume RESUME_1 = createResume(FULL_NAME_1);
-    private static final Resume RESUME_2 = createResume(FULL_NAME_2);
+    private static final Resume RESUME_2 = new Resume(FULL_NAME_2);
     private static final Resume RESUME_3 = createResume(FULL_NAME_3);
     private static final Resume RESUME_4 = createResume(FULL_NAME_4);
     private static final Resume RESUME_31 = new Resume(RESUME_3.getUuid(), FULL_NAME_31);
     {
+        RESUME_2.addContact(TELEPHONE, "555-55-55");
+        RESUME_2.addContact(SKYPE, "skype-55");
+        RESUME_2.addSection(OBJECTIVE, new TextSection("Java-Developer-55"));
+        RESUME_2.addSection(PERSONAL, new TextSection("Very clever-55"));
+
         RESUME_31.addContact(TELEPHONE, "12345");
         RESUME_31.addContact(SKYPE, "skype");
         RESUME_31.addSection(OBJECTIVE, new TextSection("Java-Developer"));

@@ -19,6 +19,7 @@ public class OrganizationSection extends AbstractSection {
         return allOrganizations;
     }
 
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -37,8 +38,8 @@ public class OrganizationSection extends AbstractSection {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        for (Organization allOrganisation : allOrganizations) {
-            sb.append(allOrganisation).append('\n');
+         {
+            sb.append(allOrganizations).append('\n');
         }
         return sb.toString();
     }

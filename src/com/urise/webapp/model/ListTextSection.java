@@ -41,10 +41,6 @@ public class ListTextSection extends AbstractSection implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        for (String s : list) {
-            sb.append("- ").append(s).append('\n');
-        }
-        return sb.toString();
+        return String.join("\n", list);
     }
 }

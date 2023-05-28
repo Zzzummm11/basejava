@@ -1,3 +1,7 @@
+body {
+    font-family: arial, sans-serif;
+}
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
@@ -41,4 +45,24 @@ p {
     font-family: arial, sans-serif;
     color: black;
     font-size: 16px;
+}
+
+dl {
+    background: none repeat scroll 0 0 #FAFAFA;
+    margin: 8px 0;
+    padding: 0;
+}
+
+dt {
+    display: inline-block;
+    width: 170px;
+}
+
+dd {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: top;
+}
+h4 {
+    margin-bottom: 1px; /* Отступ снизу */
 }

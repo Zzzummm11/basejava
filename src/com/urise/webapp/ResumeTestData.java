@@ -1,9 +1,9 @@
 package com.urise.webapp;
 
-import com.urise.webapp.model.ListTextSection;
-import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.TextSection;
+import com.urise.webapp.model.*;
+import com.urise.webapp.util.DataUtil;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class ResumeTestData {
         qualificationList.add("Qualification_2");
         qualificationList.add("Qualification_3");
         qualificationList.add("Qualification_4");
-/*
+
         List<Organization> allOrganizations = new ArrayList<>();
 
         r.getSections().put(EXPERIENCE, new OrganizationSection(allOrganizations));
@@ -77,7 +77,7 @@ public class ResumeTestData {
         allEducations.add(new Organization("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366", periods22));
         periods22.add(new Period(DataUtil.of(2011, Month.MARCH),DataUtil.of(2011, Month.APRIL), "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML'","dsdsdsd"));
 
-    */
+
     }
 
 }

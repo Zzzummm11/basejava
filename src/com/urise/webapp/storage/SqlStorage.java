@@ -4,6 +4,7 @@ import com.urise.webapp.exeption.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.sql.ConnectionFactory;
 import com.urise.webapp.sql.SqlHelper;
+import com.urise.webapp.util.JsonParser;
 
 import java.sql.*;
 import java.util.*;
@@ -179,8 +180,9 @@ public class SqlStorage implements Storage {
             case ACHIEVEMENT:
             case QUALIFICATION:
                 return String.join("\n", ((ListTextSection) section).getList());
-//            case EXPERIENCE:
-//            case EDUCATION:
+            case EXPERIENCE:
+            case EDUCATION:
+                return JsonParser.write(section, AbstractSection.class);
             default:
                 return null;
 
@@ -189,14 +191,19 @@ public class SqlStorage implements Storage {
 
     private void addContactToResume(final ResultSet rs, final Resume r) throws SQLException {
         String value = rs.getString("contact_value");
-        ContactType type = ContactType.valueOf(rs.getString("contact_type"));
-        r.addContact(type, value);
+        if (value != null) {
+            ContactType type = ContactType.valueOf(rs.getString("contact_type"));
+            r.addContact(type, value);
+        }
     }
 
     private void addSectionToResume(final ResultSet rs, final Resume r) throws SQLException {
-        SectionType sectionType = SectionType.valueOf(rs.getString("section_type"));
-        AbstractSection abstractSection = readSectionFromSQL(rs, sectionType);
-        r.addSection(sectionType, abstractSection);
+        String value = rs.getString("section_type");
+        if (value != null) {
+            SectionType sectionType = SectionType.valueOf(rs.getString("section_type"));
+            AbstractSection abstractSection = readSectionFromSQL(rs, sectionType);
+            r.addSection(sectionType, abstractSection);
+        }
     }
 
     private AbstractSection readSectionFromSQL(final ResultSet rs, final SectionType sectionType) throws SQLException {
@@ -208,14 +215,14 @@ public class SqlStorage implements Storage {
             case QUALIFICATION:
                 String value = rs.getString("section_value");
                 return new ListTextSection(Arrays.asList(value.split("\n")));
-//            case EXPERIENCE:
-//            case EDUCATION:
+            case EXPERIENCE:
+            case EDUCATION:
+                return JsonParser.read(rs.getString("section_value"), AbstractSection.class);
             default:
                 return null;
         }
     }
 
 }
-
 
 
