@@ -14,8 +14,8 @@ CREATE TABLE contact
             REFERENCES resume
             ON UPDATE RESTRICT ON DELETE CASCADE,
 
-    type        TEXT     NOT NULL,
-    value       TEXT     NOT NULL
+    contact_type        TEXT     NOT NULL,
+    contact_value       TEXT     NOT NULL
 
 );
 
@@ -29,10 +29,13 @@ CREATE TABLE section
             REFERENCES resume
             ON UPDATE RESTRICT ON DELETE CASCADE,
 
-    type        TEXT     NOT NULL,
-    value       TEXT     NOT NULL
+    section_type        TEXT     NOT NULL,
+    section_value       TEXT     NOT NULL
 
 );
 
 CREATE UNIQUE INDEX contact_uuid_type_index
-    ON contact (resume_uuid, type);
+    ON contact (resume_uuid, contact_type);
+
+CREATE UNIQUE INDEX section_uuid_type_index
+    ON section (resume_uuid, section_type);
