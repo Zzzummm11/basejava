@@ -4,6 +4,7 @@ import com.urise.webapp.Config;
 import com.urise.webapp.exeption.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import org.apache.taglibs.standard.functions.Functions;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.taglibs.standard.functions.Functions.trim;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -24,7 +28,7 @@ public class ResumeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
-        String fullName = request.getParameter("fullName");
+        String fullName = trim(request.getParameter("fullName"));
         try {
             storage.get(uuid);
         } catch (NotExistStorageException e) {
@@ -36,7 +40,7 @@ public class ResumeServlet extends HttpServlet {
             String value = request.getParameter(type.name());
 
             if (value != null && value.trim().length() != 0) {
-                r.addContact(type, value);
+                r.addContact(type, trim(value));
             } else {
                 r.getContacts().remove(type);
             }
@@ -56,8 +60,12 @@ public class ResumeServlet extends HttpServlet {
 //                    || organizationName != null && organizationName.trim().length() != 0
             ) {
                 AbstractSection section = switch (sectionType) {
-                    case PERSONAL, OBJECTIVE -> new TextSection(sectionValue);
-                    case ACHIEVEMENT, QUALIFICATION -> new ListTextSection(Arrays.asList(sectionValue.split("\n")));
+                    case PERSONAL, OBJECTIVE -> new TextSection(trim(sectionValue.replaceAll("\\s+", " ")));
+                    case ACHIEVEMENT, QUALIFICATION -> {
+                        List<String> list = Arrays.asList(sectionValue.replaceAll("(?m)^[ \t]*\r?\n", "").split("\n"));
+                        list.replaceAll(Functions::trim);
+                        yield new ListTextSection(list);
+                    }
 //                    case EXPERIENCE, EDUCATION -> {
 //                        List<Organization> allOrganisations = new ArrayList<>();
 //                        for (int i = 0; i < organizationCount; i++) {

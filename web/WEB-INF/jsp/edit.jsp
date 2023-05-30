@@ -20,7 +20,8 @@
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
             <dt>Имя:</dt>
-            <dd><input type="text" name="fullName" size=50 value="${resume.fullName}" required></dd>
+            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}" required
+                       onblur="checkSpaces(this)"></dd>
         </dl>
         <h3>Контакты:</h3>
         <p>
@@ -94,5 +95,13 @@
         <button type="reset" onclick="window.history.back()">Отменить</button>
     </form>
 </section>
+<script>
+    function checkSpaces(input) {
+        const value = input.value;
+        if (value.trim() === '') {
+            alert('ФИО не может быть пустым');
+        }
+    }
+</script>
 </body>
 </html>
