@@ -7,13 +7,16 @@ import com.urise.webapp.util.LocalDateTimeTypeAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Period implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
+    public static final Period EMPTY = new Period(LocalDate.MIN, LocalDate.MIN, "", "");
     @JsonAdapter(LocalDateTimeTypeAdapter.class)
     @XmlJavaTypeAdapter(LocalDataAdapter.class)
     private LocalDate startDate;
@@ -24,10 +27,6 @@ public class Period implements Serializable {
     private String description;
 
     public Period() {
-        this.startDate = null;
-        this.endDate = null;
-        this.title = null;
-        this.description = null;
     }
 
     public Period(final LocalDate startDate, final LocalDate endDate, final String title) {

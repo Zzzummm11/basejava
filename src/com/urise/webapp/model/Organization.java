@@ -9,15 +9,15 @@ import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
+
     private static final long serialVersionUID = 1L;
+    public static final Organization EMPTY = new Organization("", "", new ArrayList<>(List.of(Period.EMPTY)));
     private String name;
     private String website;
     private List<Period> periods;
 
     public Organization() {
-        this.name = null;
-        this.website = null;
-        this.periods= new ArrayList<>(List.of(new Period()));
+
     }
 
     public Organization(final String name, final List<Period> periods) {
@@ -49,6 +49,9 @@ public class Organization implements Serializable {
         return periods;
     }
 
+    public void setPeriods(final List<Period> periods) {
+        this.periods = periods;
+    }
 
     @Override
     public boolean equals(final Object o) {

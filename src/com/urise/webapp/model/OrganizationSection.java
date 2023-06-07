@@ -1,10 +1,14 @@
 package com.urise.webapp.model;
 
+import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
+    @Serial
     private static final long serialVersionUID = 1L;
+    public static final OrganizationSection EMPTY = new OrganizationSection(new ArrayList<>(List.of(Organization.EMPTY)));
     private List<Organization> allOrganizations;
 
     public OrganizationSection() {
