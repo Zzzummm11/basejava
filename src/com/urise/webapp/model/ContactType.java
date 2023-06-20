@@ -7,7 +7,7 @@ public enum ContactType {
     EMAIL("Email ") {
         @Override
         public String toHtml0(String value) {
-            return "<a href='mailto: " + value + "'>" + value + "</a>";
+            return "<a class=\"contact-link\" href='mailto: " + value + "'>" + value + "</a>";
         }
     },
 
