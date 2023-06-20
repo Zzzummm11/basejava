@@ -12,19 +12,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static com.urise.webapp.model.SectionType.*;
 import static org.apache.taglibs.standard.functions.Functions.trim;
 
 public class ResumeServlet extends HttpServlet {
+
+    private boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
+    }
+
+    private enum THEME {
+        dark, light
+    }
+
     private Storage storage;
+    private final Set<String> themes = new HashSet<>();
 
     @Override
     public void init() throws ServletException {
         storage = Config.get().getStorage();
+        for (THEME t : THEME.values()) {
+            themes.add(t.name());
+        }
+
     }
 
     @Override
@@ -51,61 +63,55 @@ public class ResumeServlet extends HttpServlet {
 
         for (SectionType sectionType : SectionType.values()) {
             String sectionValue = request.getParameter(sectionType.name());
-            String[] organizationNames = request.getParameterValues(sectionType.name() + "organizationName");
-            AbstractSection section;
-            if (sectionValue != null && sectionValue.trim().length() != 0 || organizationNames != null && organizationNames.length > 0) {
-                section = switch (sectionType) {
-                    case PERSONAL, OBJECTIVE -> new TextSection(trim(sectionValue.replaceAll("\\s+", " ")));
+            String[] organizationNames = request.getParameterValues(sectionType.name());
+            if (isEmpty(sectionValue) || organizationNames == null || organizationNames.length < 1) {
+                r.getSections().remove(sectionType);
+            } else {
+                switch (sectionType) {
+                    case PERSONAL, OBJECTIVE ->
+                            r.addSection(sectionType, new TextSection(trim(sectionValue.replaceAll("\\s+", " "))));
                     case ACHIEVEMENT, QUALIFICATION -> {
-                        List<String> list = Arrays.asList(sectionValue.replaceAll("(?m)^[ \t]*\r?\n", "").split("\n"));
+                        final List<String> list = Arrays.asList(sectionValue.replaceAll("(?m)^[ \t]*\r?\n", "").split("\n"));
                         list.replaceAll(Functions::trim);
-                        yield new ListTextSection(list);
+                        r.addSection(sectionType, new ListTextSection(list));
                     }
                     case EXPERIENCE, EDUCATION -> {
-                        List<Organization> allOrganisations = new ArrayList<>();
-                        String[] organizationWebsite = request.getParameterValues(sectionType.name() + "website");
+                        final List<Organization> allOrganisations = new ArrayList<>();
+                        final String[] organizationWebsite = request.getParameterValues(sectionType.name() + "website");
                         for (int i = 0; i < organizationNames.length; i++) {
-                            String organizationName = organizationNames[i];
-                            if (organizationName != null && organizationName.trim().length() != 0) {
-                                List<Period> periodList = new ArrayList<>();
-                                String[] periods = request.getParameterValues(sectionType.name() + i);
-                                String[] dataStart = request.getParameterValues(sectionType.name() + i + "startDate");
-                                String[] dataEnd = request.getParameterValues(sectionType.name() + i + "endDate");
-                                String[] title = request.getParameterValues(sectionType.name() + i + "title");
-                                String[] description = request.getParameterValues(sectionType.name() + i + "description");
-                                if (periods != null) {
-                                    for (int j = 0; j < periods.length; j++) {
-                                        if (dataStart[j] != null && dataStart[j].trim().length() != 0 && LocalDate.parse(dataStart[j]) != LocalDate.MIN &&
-                                                dataEnd[j] != null && dataEnd[j].trim().length() != 0 && LocalDate.parse(dataEnd[j]) != LocalDate.MIN) {
-                                            Period period = new Period(LocalDate.parse(dataStart[j]), LocalDate.parse(dataEnd[j]),
-                                                    trim(title[j]), description[j].replaceAll("(?m)^[ \t]*\r?\n", ""));
-                                            periodList.add(period);
-                                        }
+                            String name = organizationNames[i];
+                            if (!isEmpty(name)) {
+                                final List<Period> periods = new ArrayList<>();
+                                String prefix = sectionType.name() + i;
+                                String[] startDates = request.getParameterValues(prefix + "startDate");
+                                String[] endDates = request.getParameterValues(prefix + "endDate");
+                                String[] title = request.getParameterValues(prefix + "title");
+                                String[] description = request.getParameterValues(prefix + "description");
+                                for (int j = 0; j < title.length; j++) {
+                                    if (!isEmpty(startDates[j]) && !isEmpty(endDates[j]) && !isEmpty(title[j])) {
+                                        periods.add(new Period(
+                                                LocalDate.parse(startDates[j]),
+                                                LocalDate.parse(endDates[j]),
+                                                trim(title[j]),
+                                                trim(description[j].replaceAll("(?m)^[ \t]*\r?\n", ""))
+                                        ));
                                     }
                                 }
-                                if (organizationWebsite[i] != null && organizationWebsite[i].trim().length() != 0) {
-                                    allOrganisations.add(new Organization(trim(organizationName), trim(organizationWebsite[i]), periodList));
+                                if (!isEmpty(organizationWebsite[i])) {
+                                    allOrganisations.add(new Organization(name, organizationWebsite[i], periods));
                                 } else {
-                                    allOrganisations.add(new Organization(organizationName, periodList));
+                                    allOrganisations.add(new Organization(name, periods));
                                 }
 
                             }
                         }
-                        if (allOrganisations.size() > 0) {
-                            yield new OrganizationSection(allOrganisations);
-                        } else {
-                            yield OrganizationSection.EMPTY;
-                        }
+                        r.addSection(sectionType, new OrganizationSection(allOrganisations));
                     }
-
-                };
-                r.addSection(sectionType, section);
-            } else {
-                r.getSections().remove(sectionType);
+                }
             }
         }
         storage.update(r);
-        response.sendRedirect("resume");
+        response.sendRedirect("resume?theme=" + getTheme(request));
     }
 
 
@@ -117,6 +123,7 @@ public class ResumeServlet extends HttpServlet {
 
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
+        request.setAttribute("theme", getTheme(request));
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("all_resumes").forward(request, response);
@@ -153,19 +160,19 @@ public class ResumeServlet extends HttpServlet {
                             break;
                         case EXPERIENCE:
                         case EDUCATION:
-                            if (section == null) {
-                                section = OrganizationSection.EMPTY;
-                            } else {
-                                List<Organization> allOrganizations = new ArrayList<>();
-                                for (Organization organization : ((OrganizationSection) section).getAllOrganizations()) {
-
-                                        if (organization.getPeriods() == null) {
-                                            organization.setPeriods(List.of(Period.EMPTY));
-                                        }
-                                        allOrganizations.add(organization);
-
+                            OrganizationSection organizationSection = (OrganizationSection) section;
+                            final List<Organization> emptyFirstOrganizations = new ArrayList<>();
+                            if (organizationSection != null) {
+                                final List<Organization> organizations = organizationSection.getAllOrganizations();
+                                for (Organization org : organizations) {
+                                    final List<Period> emptyFirstPeriods = new ArrayList<>();
+                                    emptyFirstPeriods.add(Period.EMPTY);
+                                    emptyFirstPeriods.addAll(org.getPeriods());
+                                    emptyFirstOrganizations.add(new Organization(org.getName(), org.getWebsite(), emptyFirstPeriods));
                                 }
-                                section = new OrganizationSection(allOrganizations);
+                                section = new OrganizationSection(emptyFirstOrganizations);
+                            } else {
+                                section = OrganizationSection.EMPTY;
                             }
                             break;
                     }
@@ -190,5 +197,10 @@ public class ResumeServlet extends HttpServlet {
             }
             default -> throw new IllegalArgumentException("Action" + action + " is illegal");
         }
+    }
+
+    private String getTheme(HttpServletRequest request) {
+        String theme = request.getParameter("theme");
+        return themes.contains(theme) ? theme : THEME.light.name();
     }
 }
