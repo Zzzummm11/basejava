@@ -45,6 +45,13 @@
         <servlet-name>header</servlet-name>
         <url-pattern>/header</url-pattern>
     </servlet-mapping>
-
+    <servlet>
+        <servlet-name>footer</servlet-name>
+        <jsp-file>/WEB-INF/jsp/fragments/footer.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>footer</servlet-name>
+        <url-pattern>/footer</url-pattern>
+    </servlet-mapping>
 
 </web-app>
